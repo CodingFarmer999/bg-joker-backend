@@ -36,3 +36,6 @@ bin/
 .idea/
 *.iml
 .DS_Store
+
+# Sensitive configuration
+application.yaml
