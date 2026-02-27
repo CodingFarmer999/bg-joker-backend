@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: joker
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=joker
+    username: yaochilee
+    password: 
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          line:
+            client-id: 2009196268
+            client-secret: ${LINE_CLIENT_SECRET}
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            scope:
+              - profile
+            client-name: LINE
+        provider:
+          line:
+            authorization-uri: https://access.line.me/oauth2/v2.1/authorize
+            token-uri: https://api.line.me/oauth2/v2.1/token
+            user-info-uri: https://api.line.me/v2/profile
+            user-name-attribute: userId
+
+joker:
+  app:
+    jwtSecret: ${JWT_SECRET}
+    jwtExpirationMs: 86400000 # 24 hours
+  frontend:
+    url: http://localhost:5173
