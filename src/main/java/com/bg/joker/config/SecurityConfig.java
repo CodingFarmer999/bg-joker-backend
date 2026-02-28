@@ -36,8 +36,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/login/**", "/oauth2/**").permitAll() // Allow auth endpoints
+                        .requestMatchers("/api/auth/**", "/login/**", "/oauth2/**", "/api/test/**",
+                                "/api/users/fcm-token")
+                        .permitAll()
                         .anyRequest().authenticated())
+
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler));
