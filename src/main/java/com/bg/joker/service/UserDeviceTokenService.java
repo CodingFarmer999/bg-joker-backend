@@ -20,10 +20,8 @@ public class UserDeviceTokenService {
     public void upsertUserDeviceToken(Long userId, String fcmToken, String deviceType) {
         log.info("Upserting device token for user: {}", userId);
 
-        // 先把其他「不同人」但使用同一組 Token 的紀錄刪除 (因為一個物理裝置同時間只會登入一個帳號)
-        tokenRepository.findByFcmToken(fcmToken).stream()
-                .filter(t -> !t.getUserId().equals(userId))
-                .forEach(tokenRepository::delete);
+        // Removed logic that deleted tokens for other users.
+        // Multiple users can share the same device and FCM token.
 
         // 接著處理現在這個使用者的紀錄
         tokenRepository.findByUserIdAndFcmToken(userId, fcmToken).ifPresentOrElse(

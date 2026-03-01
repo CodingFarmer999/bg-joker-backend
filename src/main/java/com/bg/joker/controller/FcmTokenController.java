@@ -47,6 +47,8 @@ public class FcmTokenController {
                 return ResponseEntity.status(404).body("User not found");
             }
 
+            log.info("Extracted username from JWT: {}, Resolved User ID: {}", extractedUsername, user.getId());
+
             if (request.getToken() == null || request.getToken().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Token cannot be empty");
             }
