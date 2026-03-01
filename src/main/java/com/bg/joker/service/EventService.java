@@ -24,6 +24,29 @@ public class EventService {
         return events.stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
+    @Transactional
+    public EventResponse createEvent(com.bg.joker.dto.CreateEventRequest request) {
+        Event event = Event.builder()
+                .shopId(request.getShopId() != null ? request.getShopId() : 1L)
+                .organizerId(request.getOrganizerId())
+                .eventType(request.getEventType())
+                .gameType(request.getGameType())
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .eventTime(request.getEventTime())
+                .maxParticipants(request.getMaxParticipants())
+                .status("OPEN")
+                .build();
+
+        Event savedEvent = eventRepository.save(event);
+        return convertToResponse(savedEvent);
+    }
+
+    @Transactional
+    public void deleteEvent(Long id) {
+        eventRepository.deleteById(id);
+    }
+
     private EventResponse convertToResponse(Event event) {
         long currentParticipants = eventParticipantRepository.countByEventIdAndJoinStatus(event.getId(), "JOINED");
 
