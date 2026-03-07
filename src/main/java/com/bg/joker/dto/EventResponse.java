@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import com.bg.joker.enums.GameType;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +17,7 @@ public class EventResponse {
     private Long shopId;
     private Long organizer_id;
     private String eventType;
-    private String gameType;
+    private GameType gameType;
     private String title;
     private String description;
     private OffsetDateTime eventTime;

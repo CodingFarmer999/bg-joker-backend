@@ -1,0 +1,20 @@
+package com.bg.joker.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.OffsetDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ParticipantResponse {
+    private Long id;
+    private Long userId;
+    private String userName; // user.displayName
+    private String joinStatus;
+    private OffsetDateTime joinedAt;
+}

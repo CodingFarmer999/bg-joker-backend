@@ -37,7 +37,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/login/**", "/oauth2/**", "/api/test/**",
-                                "/api/users/fcm-token", "/api/notifications", "/api/notifications/**", "/api/events")
+                                "/api/users/fcm-token", "/api/notifications", "/api/notifications/**", "/api/events",
+                                "/api/events/**", "/api/games")
                         .permitAll()
                         .anyRequest().authenticated())
 

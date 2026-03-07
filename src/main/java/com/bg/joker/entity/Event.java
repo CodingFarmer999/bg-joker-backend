@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import com.bg.joker.enums.GameType;
 
 import java.time.OffsetDateTime;
 
@@ -35,8 +36,9 @@ public class Event {
     @Builder.Default
     private String eventType = "CASUAL";
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "game_type", nullable = false, length = 50)
-    private String gameType;
+    private GameType gameType;
 
     @Column(nullable = false, length = 100)
     private String title;

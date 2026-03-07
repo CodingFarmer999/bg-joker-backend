@@ -12,9 +12,7 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateEventRequest {
-    private Long shopId;
-    private Long organizerId;
+public class UpdateEventRequest {
     private String eventType;
     private GameType gameType;
     private String title;
