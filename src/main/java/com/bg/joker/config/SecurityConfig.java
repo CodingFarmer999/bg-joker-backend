@@ -2,6 +2,7 @@ package com.bg.joker.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,44 +21,55 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-            OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler,
-            CustomOAuth2UserService customOAuth2UserService) throws Exception {
-        http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/login/**", "/oauth2/**", "/api/test/**",
-                                "/api/users/fcm-token", "/api/notifications", "/api/notifications/**", "/api/events",
-                                "/api/events/**", "/api/games")
-                        .permitAll()
-                        .anyRequest().authenticated())
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http,
+                        OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler,
+                        CustomOAuth2UserService customOAuth2UserService,
+                        com.bg.joker.security.JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+                http
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/api/auth/**", "/login/**", "/oauth2/**",
+                                                                "/api/test/**",
+                                                                "/api/users/fcm-token", "/api/notifications",
+                                                                "/api/notifications/**", "/api/events",
+                                                                "/api/events/**", "/api/games", "/api/stores")
+                                                .permitAll()
+                                                .anyRequest().authenticated())
+                                .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                                                new org.springframework.security.web.authentication.HttpStatusEntryPoint(
+                                                                org.springframework.http.HttpStatus.UNAUTHORIZED)))
+                                .oauth2Login(oauth2 -> oauth2
+                                                .userInfoEndpoint(userInfo -> userInfo
+                                                                .userService(customOAuth2UserService))
+                                                .successHandler(oAuth2LoginSuccessHandler));
 
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .successHandler(oAuth2LoginSuccessHandler));
+                http.addFilterBefore(jwtAuthenticationFilter,
+                                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+                configuration.setAllowCredentials(true);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bg.joker.mapper.StoreAdminMapper">
+
+    <select id="findEventsForAdmin" resultType="com.bg.joker.entity.Event">
+        SELECT e.* 
+        FROM events e
+        INNER JOIN store_admins sa ON e.shop_id = sa.store_id
+        WHERE sa.user_id = #{userId} 
+          AND e.shop_id = #{storeId}
+    </select>
+
+    <select id="findActiveStoresByAdminId" resultType="com.bg.joker.entity.Store">
+        SELECT s.* 
+        FROM stores s
+        INNER JOIN store_admins sa ON s.id = sa.store_id
+        WHERE sa.user_id = #{userId} 
+          AND s.is_active = true
+    </select>
+
+</mapper>

@@ -1,6 +1,7 @@
 package com.bg.joker.service;
 
 import com.bg.joker.dto.RegisterRequest;
+import com.bg.joker.dto.CreateAdminRequest;
 import com.bg.joker.entity.User;
 import com.bg.joker.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +40,29 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public User createAdminUser(CreateAdminRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new RuntimeException("Error: Username is already taken!");
+        }
+
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Error: Email is already in use!");
+        }
+
+        User admin = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .displayName(request.getDisplayName())
+                .provider("LOCAL")
+                .role("ROLE_ADMIN")
+                .enabled(true)
+                .build();
+
+        return userRepository.save(admin);
     }
 
     @Transactional(readOnly = true)
